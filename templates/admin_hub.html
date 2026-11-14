@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="max-w-6xl mx-auto mt-8">
+    <h1 class="text-3xl font-bold text-slate-900 mb-8">⚙️ {{ t.admin_hub_title }}</h1>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        
+        <!-- Card 1: User Management -->
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col h-full hover:shadow-md transition">
+            <div class="flex items-center gap-3 mb-3">
+                <span class="text-2xl">👥</span>
+                <h3 class="text-lg font-bold text-slate-800">{{ t.card_users }}</h3>
+            </div>
+            <p class="text-sm text-slate-500 mb-6 flex-grow">{{ t.card_users_desc }}</p>
+            <a href="{% url 'admin_users' %}" class="bg-green-700 hover:bg-green-800 text-white text-center py-2 rounded-lg font-semibold transition">{{ t.btn_manage }} →</a>
+        </div>
+
+        <!-- Card 2: Driver Assignment -->
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col h-full hover:shadow-md transition">
+            <div class="flex items-center gap-3 mb-3">
+                <span class="text-2xl">🚚</span>
+                <h3 class="text-lg font-bold text-slate-800">{{ t.card_assign }}</h3>
+            </div>
+            <p class="text-sm text-slate-500 mb-6 flex-grow">{{ t.card_assign_desc }}</p>
+            <a href="{% url 'admin_driver_assignment' %}" class="bg-green-700 hover:bg-green-800 text-white text-center py-2 rounded-lg font-semibold transition">{{ t.btn_assign }} →</a>
+        </div>
+
+        <!-- Card 3: Account Approvals -->
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col h-full hover:shadow-md transition">
+            <div class="flex items-center gap-3 mb-3">
+                <span class="text-2xl">✅</span>
+                <h3 class="text-lg font-bold text-slate-800">{{ t.card_approvals }}</h3>
+            </div>
+            <p class="text-sm text-slate-500 mb-6 flex-grow">{{ t.card_approvals_desc }}</p>
+            <a href="{% url 'admin_approvals' %}" class="bg-green-700 hover:bg-green-800 text-white text-center py-2 rounded-lg font-semibold transition">{{ t.btn_review }} →</a>
+        </div>
+
+        <!-- Card 4: Delivery Monitoring -->
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col h-full hover:shadow-md transition">
+            <div class="flex items-center gap-3 mb-3">
+                <span class="text-2xl">📍</span>
+                <h3 class="text-lg font-bold text-slate-800">{{ t.card_monitor }}</h3>
+            </div>
+            <p class="text-sm text-slate-500 mb-6 flex-grow">{{ t.card_monitor_desc }}</p>
+            <a href="{% url 'admin_monitoring' %}" class="bg-green-700 hover:bg-green-800 text-white text-center py-2 rounded-lg font-semibold transition">{{ t.btn_monitor }} →</a>
+        </div>
+
+        <!-- Card 5: Reports & Analytics -->
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col h-full hover:shadow-md transition">
+            <div class="flex items-center gap-3 mb-3">
+                <span class="text-2xl">📊</span>
+                <h3 class="text-lg font-bold text-slate-800">{{ t.card_reports }}</h3>
+            </div>
+            <p class="text-sm text-slate-500 mb-6 flex-grow">{{ t.card_reports_desc }}</p>
+            <a href="{% url 'admin_reports' %}" class="bg-green-700 hover:bg-green-800 text-white text-center py-2 rounded-lg font-semibold transition">{{ t.btn_reports }} →</a>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

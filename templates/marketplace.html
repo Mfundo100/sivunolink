@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="mb-8">
+    <h1 class="text-3xl font-bold text-slate-900">{{ t.marketplace }}</h1>
+    <p class="text-slate-500">{{ t.welcome }}</p>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    {% for product in products %}
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
+        {% if product.image %}
+            <img src="{{ product.image.url }}" class="w-full h-40 object-cover">
+        {% else %}
+            <div class="w-full h-40 bg-slate-100 flex items-center justify-center text-slate-400">No Image</div>
+        {% endif %}
+        <div class="p-4 flex-grow flex flex-col">
+            <h3 class="text-lg font-bold text-slate-800">{{ product.product_name }}</h3>
+            <p class="text-xs text-slate-500 mb-2">{{ product.farmer.username }} - {{ product.get_category_display }}</p>
+            <p class="text-green-700 font-bold text-lg mb-3">E{{ product.price_per_kg }} / kg</p>
+            <p class="text-sm text-slate-600 mb-4 flex-grow">{{ product.available_quantity_kg }} kg available</p>
+            
+            <form method="POST" action="{% url 'add_to_cart' product.id %}" class="flex gap-2">
+                {% csrf_token %}
+                <input type="number" name="quantity" value="1" min="1" max="{{ product.available_quantity_kg }}" class="w-16 px-2 py-2 border border-slate-300 rounded text-center">
+                <button type="submit" class="flex-1 bg-green-700 text-white px-4 py-2 rounded font-bold hover:bg-green-800 transition">{{ t.add_to_cart }}</button>
+            </form>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-span-full bg-slate-100 p-8 text-center rounded-lg">{{ t.cart_empty }}</div>
+    {% endfor %}
+</div>
+{% endblock %}

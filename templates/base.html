@@ -1,0 +1,104 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SivunoLink | Connecting Farmers to Markets</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style> body { font-family: 'Inter', sans-serif; } </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased flex flex-col min-h-screen">
+
+    <!-- Navigation Bar -->
+    <nav class="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-24 items-center">
+                
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <a href="/" class="flex items-center">
+                        <img src="{% static 'sivunolink-full.png' %}" alt="SivunoLink" class="h-20 w-auto object-contain">
+                    </a>
+                </div>
+
+              
+                                <!-- Navigation Links -->
+                <div class="hidden md:flex items-center space-x-6">
+                    
+                    {% if request.user.is_authenticated %}
+                        
+                        <!-- ADMIN LINKS -->
+                        {% if request.user.is_superuser %}
+                            <a href="{% url 'custom_admin_settings' %}" class="text-slate-900 font-bold hover:text-green-700 transition">⚙️ Admin Panel</a>
+                        
+                        <!-- BUYER / DRIVER / FARMER LINKS -->
+                        {% else %}
+                            
+                            <!-- Hide Dashboard link for Farmers -->
+                            {% if request.user.role != 'FARMER' %}
+                                <a href="{% url 'dashboard' %}" class="text-slate-600 hover:text-green-700 font-medium transition">Dashboard</a>
+                            {% endif %}
+
+                            {% if request.user.role == 'DRIVER' %}
+                                <a href="{% url 'driver_portal' %}" class="text-slate-600 hover:text-green-700 font-medium transition">My Deliveries</a>
+                            
+                            {% elif request.user.role == 'BUYER' %}
+                                <a href="{% url 'marketplace' %}" class="text-slate-600 hover:text-green-700 font-medium transition">{{ t.marketplace|default:"Marketplace" }}</a>
+                                <a href="{% url 'cart' %}" class="text-slate-600 hover:text-green-700 font-medium transition">🛒 {{ t.cart|default:"Cart" }}</a>
+                            
+                            {% elif request.user.role == 'FARMER' %}
+                                <!-- Give Farmers a direct link to their Fulfilments -->
+                                <a href="{% url 'farmer_fulfilments' %}" class="text-slate-600 hover:text-green-700 font-medium transition">{{ t.my_fulfilments|default:"My Fulfilments" }}</a>
+                            {% endif %}
+                            
+                        {% endif %} <!-- END OF SUPERUSER CHECK -->
+                        
+                        <!-- Logout (Visible to all logged-in users) -->
+                        <form method="post" action="{% url 'logout' %}" class="inline m-0 p-0">
+                            {% csrf_token %}
+                            <button type="submit" class="text-slate-600 hover:text-red-600 font-medium transition cursor-pointer">
+                                Logout ({{ request.user.username }})
+                            </button>
+                        </form>
+
+                    {% else %}
+                        <!-- GUEST LINKS -->
+                        <a href="{% url 'login' %}" class="bg-green-700 hover:bg-green-800 text-white px-5 py-2 rounded-lg font-medium transition shadow-sm">Login / Register</a>
+                    {% endif %} <!-- END OF IS_AUTHENTICATED CHECK -->
+                    <!-- Language Toggle (Always Visible) -->
+                    <div class="flex gap-1 ml-4 border-l pl-4 border-slate-300">
+                        <a href="?lang=en" class="text-sm font-bold {% if current_lang == 'en' %}text-green-700{% else %}text-slate-400{% endif %}">EN</a>
+                        <span class="text-slate-300">|</span>
+                        <a href="?lang=sz" class="text-sm font-bold {% if current_lang == 'sz' %}text-green-700{% else %}text-slate-400{% endif %}">SZ</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Alert Messages -->
+    {% if messages %}
+        <div class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 mt-4 z-50 relative">
+            {% for message in messages %}
+                <div class="p-4 mb-2 text-sm rounded-lg shadow-sm {% if message.tags == 'error' %}bg-red-100 text-red-800 border border-red-300{% else %}bg-green-100 text-green-800 border border-green-300{% endif %}" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Main Content Container -->
+    <main class="flex-grow w-full relative">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-300 py-6 mt-auto z-10 relative">
+        <div class="max-w-7xl mx-auto px-4 text-center text-sm">
+            &copy; 2026 SivunoLink Technologies (Pty) Ltd. Connecting Farmers to Markets Through Technology.
+        </div>
+    </footer>
+</body>
+</html>

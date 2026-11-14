@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="max-w-4xl mx-auto mt-8">
+    <h1 class="text-3xl font-bold mb-6">🛒 {{ t.cart }}</h1>
+
+    {% if cart_items %}
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-6">
+        {% for item in cart_items %}
+        <div class="flex items-center justify-between border-b border-slate-100 py-4 last:border-0">
+            <div>
+                <h3 class="font-bold text-lg">{{ item.product.product_name }}</h3>
+                <p class="text-sm text-slate-500">{{ item.quantity }} kg x E{{ item.product.price_per_kg }}</p>
+            </div>
+            <div class="flex items-center gap-6">
+                <p class="font-bold text-green-700">E{{ item.subtotal }}</p>
+                <a href="{% url 'remove_from_cart' item.product.id %}" class="text-red-500 hover:text-red-700 text-sm font-bold">Remove</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="flex justify-between items-center bg-slate-800 text-white p-6 rounded-xl shadow-md">
+        <h2 class="text-2xl font-bold">{{ t.total }}</h2>
+        <p class="text-3xl font-extrabold text-green-400">E{{ total }}</p>
+    </div>
+
+    <div class="flex justify-between mt-6">
+        <a href="{% url 'marketplace' %}" class="text-slate-600 font-medium hover:underline">← {{ t.continue_shopping }}</a>
+        <a href="{% url 'checkout' %}" class="bg-green-700 hover:bg-green-800 text-white font-bold px-8 py-3 rounded-lg shadow-lg transition">{{ t.proceed_checkout }} →</a>
+    </div>
+
+    {% else %}
+    <div class="bg-blue-50 text-blue-800 p-12 text-center rounded-xl border border-blue-200">
+        <p class="text-xl font-bold mb-2">{{ t.cart_empty }}</p>
+        <p class="mb-6">{{ t.cart_empty_sub }}</p>
+        <a href="{% url 'marketplace' %}" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-bold">{{ t.continue_shopping }}</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

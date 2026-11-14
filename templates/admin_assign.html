@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="flex justify-between items-center mb-6 mt-4">
+    <h1 class="text-2xl font-bold text-slate-800">🚚 {{ t.card_assign }}</h1>
+    <a href="{% url 'custom_admin_settings' %}" class="text-sm font-bold text-slate-500 hover:text-green-700">← {{ t.btn_back }}</a>
+</div>
+
+<div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+    {% if pending_orders %}
+    <table class="w-full text-left text-sm border border-slate-200 rounded-lg overflow-hidden">
+        <thead class="bg-slate-100 text-slate-600">
+            <tr>
+                <th class="p-4">{{ t.order_id }}</th>
+                <th class="p-4">{{ t.buyer_label }}</th>
+                <th class="p-4">{{ t.amount }}</th>
+                <th class="p-4">{{ t.actions }}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in pending_orders %}
+            <tr class="border-b border-slate-100 hover:bg-slate-50">
+                <td class="p-4 font-bold">#{{ order.id }}</td>
+                <td class="p-4">{{ order.buyer.username }}</td>
+                <td class="p-4 text-green-700 font-bold">E{{ order.total_amount }}</td>
+                <td class="p-4">
+                    <form method="POST" class="flex gap-2 items-center">
+                        {% csrf_token %}
+                        <input type="hidden" name="order_id" value="{{ order.id }}">
+                        <select name="driver_id" required class="border border-slate-300 rounded px-2 py-1.5 text-sm outline-none focus:border-green-500">
+                            <option value="" disabled selected>{{ t.select_driver }}</option>
+                            {% for driver in drivers %}
+                                <option value="{{ driver.id }}">{{ driver.username }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit" class="bg-slate-800 text-white px-4 py-1.5 rounded text-xs hover:bg-slate-700">{{ t.assign_btn }}</button>
+                        <button type="submit" class="bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition">
+    Assign
+</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="bg-blue-50 text-blue-800 p-8 rounded-lg text-center font-bold">
+        {{ t.no_pending_orders }}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

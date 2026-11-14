@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="max-w-5xl mx-auto mt-8">
+    
+    <!-- Header -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-slate-900">{{ t.my_fulfilments|default:"My Order Fulfilments" }}</h1>
+        <p class="text-slate-500 mt-1">Manage your deliveries and track your payouts.</p>
+    </div>
+    
+    <div class="grid gap-6">
+        {% for f in fulfilments %}
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+            <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-4">
+                <h3 class="font-bold text-lg text-slate-800">Order #{{ f.order.id }}</h3>
+                
+                {% if f.status == 'COMPLETED' %}
+                    <span class="px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-800">
+                        {{ t.status_completed|default:"COMPLETED" }}
+                    </span>
+                {% else %}
+                    <span class="px-3 py-1 rounded-full text-xs font-bold bg-yellow-100 text-yellow-800">
+                        {{ t.status_confirmed|default:"CONFIRMED" }}
+                    </span>
+                {% endif %}
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div class="bg-slate-50 p-4 rounded-lg">
+                    <p class="text-xs text-slate-500 uppercase font-bold">{{ t.gross_amount|default:"Gross Amount" }}</p>
+                    <p class="text-xl font-bold text-slate-800">E{{ f.gross_amount|floatformat:2 }}</p>
+                </div>
+                <div class="bg-slate-50 p-4 rounded-lg">
+                    <p class="text-xs text-slate-500 uppercase font-bold">{{ t.platform_fee|default:"Platform Fee" }}</p>
+                    <p class="text-xl font-bold text-red-600">- E{{ f.commission_amount|floatformat:2 }}</p>
+                </div>
+                <div class="bg-green-50 p-4 rounded-lg border border-green-200">
+                    <p class="text-xs text-green-700 uppercase font-bold">{{ t.net_payout|default:"Net Payout" }}</p>
+                    <p class="text-xl font-bold text-green-800">E{{ f.net_amount|floatformat:2 }}</p>
+                </div>
+            </div>
+            
+            {% if f.status == 'CONFIRMED' %}
+            <form method="POST" action="{% url 'complete_fulfilment' f.id %}">
+                {% csrf_token %}
+                <button class="bg-slate-900 hover:bg-slate-800 text-white px-6 py-2.5 rounded-lg text-sm font-bold shadow-md transition">
+                    {{ t.btn_mark_completed|default:"Mark as Dispatched / Completed" }}
+                </button>
+            </form>
+            {% elif f.status == 'COMPLETED' %}
+            <p class="text-sm text-green-600 font-bold flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                Completed on {{ f.completed_at|date:"M d, Y" }}
+            </p>
+            {% endif %}
+        </div>
+        {% empty %}
+        <div class="bg-slate-100 p-12 rounded-xl text-center text-slate-500 border border-slate-200">
+            <svg class="w-16 h-16 mx-auto text-slate-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+            <p class="font-bold text-lg text-slate-700">{{ t.no_fulfilments|default:"No active fulfilments at the moment." }}</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

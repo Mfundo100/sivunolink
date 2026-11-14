@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- Header Section -->
+<div class="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div>
+        <h1 class="text-3xl font-bold text-slate-900">{{ t.title }}</h1>
+        <p class="text-slate-500 mt-1">{{ t.welcome }}</p>
+    </div>
+</div>
+
+<!-- Analytics Row -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+    <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+        <h3 class="font-bold text-slate-800 mb-4">Maize Price Trend (Shiselweni)</h3>
+        <canvas id="priceChart" height="100"></canvas>
+    </div>
+    <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+        <h3 class="font-bold text-slate-800 mb-4">Platform Revenue (SZL)</h3>
+        <canvas id="revenueChart" height="100"></canvas>
+    </div>
+</div>
+
+<!-- Dynamic Buyer Orders Section -->
+<div class="mb-4 flex justify-between items-end">
+    <h2 class="text-2xl font-bold text-slate-800">{{ t.my_orders|default:"My Recent Orders" }}</h2>
+    <a href="{% url 'marketplace' %}" class="text-sm font-bold text-green-700 hover:underline">{{ t.view_marketplace|default:"Visit Marketplace →" }}</a>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    {% for order in buyer_orders %}
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
+        
+        <!-- Order Header -->
+        <div class="bg-slate-900 px-5 py-3 flex justify-between items-center">
+            <h3 class="text-white font-bold">Order #{{ order.id }}</h3>
+            <span class="px-3 py-1 rounded-full text-xs font-bold 
+               <!-- Active Delivery Tracker (Only shows if not completed) -->
+{% if order.status == 'IN_ESCROW' or order.status == 'In Transit' or order.status == 'Assigned' %}
+<div class="bg-blue-50 text-blue-800 p-3 rounded-lg border border-blue-200 mb-4 text-sm">
+    <p class="mb-1"><strong>🔔 SMS Sent:</strong> Your order is being processed.</p>
+    <p>Delivery PIN: <span class="font-mono text-lg font-bold text-red-600 bg-white px-2 rounded">{{ order.verification_pin }}</span></p>
+</div>
+
+<!-- Dispute Button -->
+<form action="{% url 'raise_dispute' order.id %}" method="POST">
+    {% csrf_token %}
+    <button type="submit" class="w-full bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 py-2 rounded-lg text-sm font-semibold transition flex items-center justify-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+        {{ t.dispute|default:"Open Dispute (Escrow Hold)" }}
+    </button>
+</form>
+{% elif order.status == 'Completed' %}
+<div class="bg-green-50 text-green-800 p-3 rounded-lg border border-green-200 text-sm text-center font-bold">
+    ✅ Delivery Completed Successfully
+</div>
+{% endif %}
+            </span>
+        </div>
+
+        <!-- Order Body -->
+        <div class="p-5 flex-grow">
+            <div class="flex justify-between text-sm mb-2">
+                <span class="text-slate-500">{{ t.total_amount|default:"Total Amount" }}:</span>
+                <span class="font-bold text-green-700">E{{ order.total_amount }}</span>
+            </div>
+            <div class="flex justify-between text-sm mb-2">
+                <span class="text-slate-500">{{ t.driver|default:"Driver" }}:</span>
+                <span class="font-medium text-slate-800">{{ order.matched_driver.username|default:"Not Assigned Yet" }}</span>
+            </div>
+            <div class="flex justify-between text-sm mb-4">
+                <span class="text-slate-500">Date:</span>
+                <span class="font-medium text-slate-800">{{ order.created_at|date:"M d, Y H:i" }}</span>
+            </div>
+
+            <!-- Active Delivery Tracker (Only shows if not completed) -->
+            {% if order.status == 'Assigned' or order.status == 'In Transit' %}
+            <div class="bg-blue-50 text-blue-800 p-3 rounded-lg border border-blue-200 mb-4 text-sm">
+                <p class="mb-1"><strong>🔔 SMS Sent:</strong> Your driver is on the way.</p>
+                <p>Delivery PIN: <span class="font-mono text-lg font-bold text-red-600 bg-white px-2 rounded">{{ order.verification_pin }}</span></p>
+            </div>
+            
+            <!-- Dispute Button -->
+            <form action="{% url 'raise_dispute' order.id %}" method="POST">
+                {% csrf_token %}
+                <button type="submit" class="w-full bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 py-2 rounded-lg text-sm font-semibold transition flex items-center justify-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    {{ t.dispute|default:"Open Dispute (Escrow Hold)" }}
+                </button>
+            </form>
+            {% elif order.status == 'Completed' %}
+            <div class="bg-green-50 text-green-800 p-3 rounded-lg border border-green-200 text-sm text-center font-bold">
+                ✅ Delivery Completed Successfully
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% empty %}
+    <!-- Empty State -->
+    <div class="col-span-full bg-slate-100 p-12 text-center rounded-xl border border-slate-200">
+        <svg class="w-16 h-16 mx-auto text-slate-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+        <p class="text-lg font-bold text-slate-600 mb-2">{{ t.no_orders|default:"You have not placed any orders yet." }}</p>
+        <a href="{% url 'marketplace' %}" class="inline-block bg-green-700 text-white px-6 py-2 rounded-lg font-bold mt-2 hover:bg-green-800 transition">
+            {{ t.view_marketplace|default:"Visit Marketplace" }}
+        </a>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Chart.js Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctxPrice = document.getElementById('priceChart').getContext('2d');
+    new Chart(ctxPrice, {
+        type: 'line',
+        data: {
+            labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'This Week'],
+            datasets: [{
+                label: 'Price per Bag (SZL)',
+                data: [120, 125, 140, 135, 150],
+                borderColor: '#15803D',
+                backgroundColor: 'rgba(21, 128, 61, 0.1)',
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: { responsive: true, plugins: { legend: { display: false } } }
+    });
+
+    const ctxRev = document.getElementById('revenueChart').getContext('2d');
+    new Chart(ctxRev, {
+        type: 'bar',
+        data: {
+            labels: ['Aug', 'Sep', 'Oct'],
+            datasets: [{
+                label: 'Platform Commission (SZL)',
+                data: [15000, 24000, 32000],
+                backgroundColor: '#1E293B',
+                borderRadius: 5
+            }]
+        },
+        options: { responsive: true, plugins: { legend: { display: false } } }
+    });
+</script>
+{% endblock %}

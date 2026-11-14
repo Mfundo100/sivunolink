@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="max-w-3xl mx-auto mt-8">
+    <h1 class="text-3xl font-bold mb-6">{{ t.checkout_title }}</h1>
+
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-6">
+        <h2 class="text-lg font-bold mb-4">{{ t.order_summary }}</h2>
+        {% for item in cart_items %}
+        <div class="flex justify-between text-sm mb-2">
+            <span>{{ item.product.product_name }} (x{{ item.quantity }} kg)</span>
+            <span class="font-medium">E{{ item.subtotal }}</span>
+        </div>
+        {% endfor %}
+        <div class="border-t border-slate-200 mt-4 pt-4 flex justify-between font-bold text-lg">
+            <span>{{ t.total }}</span>
+            <span class="text-green-700">E{{ total }}</span>
+        </div>
+    </div>
+
+    <form method="POST" class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+        {% csrf_token %}
+        <div class="mb-6">
+            <label class="block text-sm font-bold text-slate-700 mb-2">{{ t.payment_method }}</label>
+            <select name="payment_method" required class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none">
+                <option value="MOBILE">Mobile Money (MTN MoMo / Eswatini Mobile)</option>
+                <option value="CASH">Cash on Delivery</option>
+                <option value="CARD">Credit/Debit Card</option>
+            </select>
+        </div>
+        
+        <!-- Optional Driver Selection (For demo purposes) -->
+               <!-- Optional Driver Selection (For demo purposes) -->
+        <div class="mb-8">
+            <label class="block text-sm font-bold text-slate-700 mb-2">Select Driver (Optional)</label>
+            <select name="driver_id" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none bg-white">
+                <option value="">-- Leave blank to let Admin assign a driver --</option>
+                {% for driver in drivers %}
+                    <option value="{{ driver.id }}">{{ driver.username }} ({{ driver.driverprofile.vehicle_type }})</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button type="submit" class="w-full bg-green-700 hover:bg-green-800 text-white font-bold py-4 rounded-lg shadow-lg transition text-lg">
+            {{ t.confirm_order }}
+        </button>
+    </form>
+</div>
+{% endblock %}

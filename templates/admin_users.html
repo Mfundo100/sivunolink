@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="flex justify-between items-center mb-6 mt-4">
+    <h1 class="text-2xl font-bold text-slate-800">👥 {{ t.card_users }}</h1>
+    <a href="{% url 'custom_admin_settings' %}" class="text-sm font-bold text-slate-500 hover:text-green-700">← {{ t.btn_back }}</a>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+        <div class="overflow-x-auto border border-slate-200 rounded-lg">
+            <table class="w-full text-left text-sm">
+                <thead class="bg-slate-100 text-slate-600">
+                    <tr>
+                        <th class="p-4">{{ t.user }}</th>
+                        <th class="p-4">{{ t.role }}</th>
+                        <th class="p-4">{{ t.status }}</th>
+                        <th class="p-4">{{ t.actions }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for u in users %}
+                    <tr class="border-b border-slate-100 hover:bg-slate-50">
+                        <td class="p-4 font-medium">{{ u.username }}</td>
+                        <td class="p-4"><span class="px-2 py-1 bg-slate-100 rounded text-xs">{{ u.role }}</span></td>
+                        <td class="p-4">
+                            {% if u.is_active %}<span class="text-green-600 font-bold">● {{ t.active }}</span>
+                            {% else %}<span class="text-red-600 font-bold">● {{ t.suspended }}</span>{% endif %}
+                        </td>
+                        <td class="p-4">
+                            <form method="POST" action="{% url 'toggle_user' u.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="text-xs bg-slate-800 text-white px-3 py-1.5 rounded hover:bg-slate-700">{{ t.toggle }}</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="bg-slate-50 rounded-xl border border-slate-200 p-4 h-[500px] overflow-y-auto">
+        <h2 class="text-lg font-bold mb-4">{{ t.recent_actions }}</h2>
+        <ul class="space-y-4">
+            {% for log in logs %}
+            <li class="text-sm border-b border-slate-200 pb-3">
+                <span class="font-bold">{{ log.actor.username }}</span> {{ log.action }} <br>
+                <span class="text-slate-500">{{ log.target_entity }}</span>
+                <div class="text-xs text-slate-400 mt-1">{{ log.timestamp|date:"M d, H:i" }}</div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endblock %}

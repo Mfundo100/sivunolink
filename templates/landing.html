@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Full width hero image container -->
+<div class="-mt-8 relative w-full min-h-[85vh] flex items-center justify-center bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');">
+    
+    <!-- Dark overlay -->
+    <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
+
+    <!-- Hero Content -->
+    <div class="relative z-10 text-center px-4 max-w-4xl mx-auto">
+        <h1 class="text-5xl md:text-7xl font-extrabold text-white tracking-tight mb-6 drop-shadow-lg">
+            {{ t.landing_headline_1 }} <span class="text-green-400">{{ t.landing_headline_2 }}</span> {{ t.landing_headline_3 }} <span class="text-green-400">{{ t.landing_headline_4 }}</span>
+        </h1>
+        <p class="text-lg md:text-2xl text-slate-200 mb-10 max-w-2xl mx-auto drop-shadow-md">
+            {{ t.landing_sub }}
+        </p>
+        
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="{% url 'login' %}" class="bg-green-600 hover:bg-green-500 text-white font-bold text-lg px-8 py-4 rounded-xl shadow-lg transition transform hover:-translate-y-1">
+                {{ t.landing_btn_login }}
+            </a>
+            <a href="{% url 'register' %}" class="bg-white hover:bg-slate-100 text-slate-900 font-bold text-lg px-8 py-4 rounded-xl shadow-lg transition transform hover:-translate-y-1">
+                {{ t.landing_btn_register }}
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="max-w-4xl mx-auto mt-8">
+    <h1 class="text-3xl font-bold text-slate-900 mb-2">{{ t.driver_title }}</h1>
+    
+    <!-- Verification Form -->
+    <div class="bg-slate-800 rounded-xl p-6 mb-8 shadow-lg text-white">
+        <h2 class="text-xl font-bold mb-4">{{ t.verify_delivery }}</h2>
+        <p class="text-sm text-slate-300 mb-4">{{ t.pin_instructions }}</p>
+        <form method="POST" action="{% url 'verify_delivery' %}" class="flex flex-col sm:flex-row gap-4">
+            {% csrf_token %}
+            <input type="text" name="order_id" placeholder="Order # (e.g. 12)" required class="flex-1 px-4 py-3 rounded-lg text-slate-900 font-bold outline-none focus:ring-2 focus:ring-green-500">
+            <input type="text" name="pin" maxlength="4" placeholder="PIN" required class="w-full sm:w-32 px-4 py-3 rounded-lg text-slate-900 font-bold text-center tracking-widest outline-none focus:ring-2 focus:ring-green-500">
+            <button type="submit" class="bg-green-600 hover:bg-green-500 text-white font-bold px-6 py-3 rounded-lg shadow-sm transition">{{ t.confirm_release }}</button>
+        </form>
+    </div>
+
+    <h2 class="text-xl font-bold mb-4">{{ t.active_deliveries }}</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {% for order in driver_orders %}
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+            <div class="flex justify-between items-start mb-2">
+                <h3 class="font-bold text-lg text-slate-800">Order #{{ order.id }}</h3>
+                <span class="bg-yellow-100 text-yellow-800 text-xs font-bold px-2 py-1 rounded">{{ order.status }}</span>
+            </div>
+            <p class="text-sm text-slate-600 mb-1"><strong>{{ t.buyer_label }}</strong> {{ order.buyer.username }}</p>
+            <p class="text-sm text-slate-600 mb-3"><strong>{{ t.dest_label }}</strong> Urban Hub</p>
+            <p class="text-sm text-slate-500 border-t border-slate-100 pt-2">Ask buyer for PIN</p>
+        </div>
+        {% empty %}
+        <div class="col-span-full bg-blue-50 text-blue-800 p-6 rounded-lg text-center font-bold">
+            {{ t.no_deliveries }}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

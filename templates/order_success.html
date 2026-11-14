@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="max-w-lg mx-auto mt-16 text-center">
+    <div class="bg-green-100 text-green-600 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6">
+        <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+    </div>
+    
+    <h1 class="text-3xl font-extrabold text-slate-900 mb-2">{{ t.order_success }}</h1>
+    <p class="text-slate-500 mb-8">Your produce is being prepared for delivery.</p>
+
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-8 text-left mb-8">
+        <div class="flex justify-between mb-4">
+            <span class="text-slate-500">{{ t.order_id }}:</span>
+            <span class="font-bold text-slate-900">#{{ order.id }}</span>
+        </div>
+        <div class="flex justify-between mb-4">
+            <span class="text-slate-500">{{ t.pin }}:</span>
+            <span class="font-mono text-xl font-bold text-red-600 tracking-widest bg-red-50 px-3 py-1 rounded">{{ order.verification_pin }}</span>
+        </div>
+        <div class="flex justify-between border-t border-slate-100 pt-4">
+            <span class="text-slate-500">{{ t.total }}:</span>
+            <span class="font-bold text-green-700">E{{ order.total_amount }}</span>
+        </div>
+    </div>
+    
+    <p class="text-sm text-slate-500 mb-6 italic">* Keep this PIN safe. Give it to the driver ONLY when you receive your produce.</p>
+
+    <a href="{% url 'dashboard' %}" class="bg-slate-800 text-white px-8 py-3 rounded-lg font-bold">{{ t.dashboard_btn }}</a>
+</div>
+{% endblock %}

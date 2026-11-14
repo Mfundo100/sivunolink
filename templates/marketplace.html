@@ -13,21 +13,24 @@
         <!-- In marketplace.html, replace the image block with this: -->
       
                 <!-- Bulletproof Image Wrapper -->
-       
                 <!-- Static Real Images -->
         <div class="w-full h-40 bg-slate-100 relative overflow-hidden">
-            {% if product.product_name == "Cabbage" or product.product_name == "Cabbages" %}
+            {% if "cabbage" in product.product_name|lower %}
                 <img src="{% static 'images/products/cabbage.jpg' %}" alt="Cabbage" class="w-full h-full object-cover">
-            {% elif product.product_name == "Avocado" %}
+            {% elif "avocado" in product.product_name|lower %}
                 <img src="{% static 'images/products/avocado.jpg' %}" alt="Avocado" class="w-full h-full object-cover">
-            {% elif product.product_name == "Spinach" %}
+            {% elif "spinach" in product.product_name|lower %}
                 <img src="{% static 'images/products/spinach.jpg' %}" alt="Spinach" class="w-full h-full object-cover">
-            {% elif product.product_name == "Potatoes" %}
-                <img src="{% static 'images/products/potatoes.jpg' %}" alt="Potatoes" class="w-full h-full object-cover">
-            {% elif product.product_name == "Oranges" %}
+            {% elif "potato" in product.product_name|lower %}
+                <img src="{% static 'images/products/potato.jpg' %}" alt="Potatoes" class="w-full h-full object-cover">
+            {% elif "orange" in product.product_name|lower %}
                 <img src="{% static 'images/products/oranges.jpg' %}" alt="Oranges" class="w-full h-full object-cover">
-            {% elif product.product_name == "Beans" %}
+            {% elif "bean" in product.product_name|lower %}
                 <img src="{% static 'images/products/beans.jpg' %}" alt="Beans" class="w-full h-full object-cover">
+            {% elif "tomato" in product.product_name|lower %}
+                <img src="{% static 'images/products/tomato.jpg' %}" alt="Tomatoes" class="w-full h-full object-cover">
+            {% elif "apple" in product.product_name|lower %}
+                <img src="{% static 'images/products/apple.jpg' %}" alt="Apple" class="w-full h-full object-cover">
             {% else %}
                 <!-- A nice fallback if a new product is added without an image -->
                 <div class="w-full h-full flex items-center justify-center bg-slate-200 text-slate-400 font-bold">

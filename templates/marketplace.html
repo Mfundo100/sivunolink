@@ -8,11 +8,26 @@
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
     {% for product in products %}
     <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
-        {% if product.image %}
-            <img src="{{ product.image.url }}" class="w-full h-40 object-cover">
-        {% else %}
-            <div class="w-full h-40 bg-slate-100 flex items-center justify-center text-slate-400">No Image</div>
-        {% endif %}
+       
+        <!-- In marketplace.html, replace the image block with this: -->
+      
+                <!-- Bulletproof Image Wrapper -->
+        <div class="w-full h-40 bg-slate-100 flex items-center justify-center relative overflow-hidden">
+            {% if product.image %}
+                <!-- onerror removes the broken image tag if the file is missing -->
+                <img src="{{ product.image.url }}" alt="{{ product.product_name }}" class="absolute inset-0 w-full h-full object-cover z-10" onerror="this.remove()">
+            {% endif %}
+            
+            <!-- This fallback sits behind the image. If the image loads, it covers this. If it fails, this shows. -->
+            <span class="text-5xl text-slate-300 z-0">
+                {% if product.category == 'VEGETABLES' %}🥬
+                {% elif product.category == 'FRUITS' %}🍎
+                {% elif product.category == 'GRAINS' %}🌾
+                {% elif product.category == 'LEGUMES' %}🫘
+                {% elif product.category == 'TOMATOES' %}🍅
+                {% else %}🌱{% endif %}
+            </span>
+        </div>
         <div class="p-4 flex-grow flex flex-col">
             <h3 class="text-lg font-bold text-slate-800">{{ product.product_name }}</h3>
             <p class="text-xs text-slate-500 mb-2">{{ product.farmer.username }} - {{ product.get_category_display }}</p>

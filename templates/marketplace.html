@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
+{% load static %}
 <div class="mb-8">
     <h1 class="text-3xl font-bold text-slate-900">{{ t.marketplace }}</h1>
     <p class="text-slate-500">{{ t.welcome }}</p>
@@ -12,22 +13,29 @@
         <!-- In marketplace.html, replace the image block with this: -->
       
                 <!-- Bulletproof Image Wrapper -->
-        <div class="w-full h-40 bg-slate-100 flex items-center justify-center relative overflow-hidden">
-            {% if product.image %}
-                <!-- onerror removes the broken image tag if the file is missing -->
-                <img src="{{ product.image.url }}" alt="{{ product.product_name }}" class="absolute inset-0 w-full h-full object-cover z-10" onerror="this.remove()">
+       
+                <!-- Static Real Images -->
+        <div class="w-full h-40 bg-slate-100 relative overflow-hidden">
+            {% if product.product_name == "Cabbage" or product.product_name == "Cabbages" %}
+                <img src="{% static 'images/products/cabbage.jpg' %}" alt="Cabbage" class="w-full h-full object-cover">
+            {% elif product.product_name == "Avocado" %}
+                <img src="{% static 'images/products/avocado.jpg' %}" alt="Avocado" class="w-full h-full object-cover">
+            {% elif product.product_name == "Spinach" %}
+                <img src="{% static 'images/products/spinach.jpg' %}" alt="Spinach" class="w-full h-full object-cover">
+            {% elif product.product_name == "Potatoes" %}
+                <img src="{% static 'images/products/potatoes.jpg' %}" alt="Potatoes" class="w-full h-full object-cover">
+            {% elif product.product_name == "Oranges" %}
+                <img src="{% static 'images/products/oranges.jpg' %}" alt="Oranges" class="w-full h-full object-cover">
+            {% elif product.product_name == "Beans" %}
+                <img src="{% static 'images/products/beans.jpg' %}" alt="Beans" class="w-full h-full object-cover">
+            {% else %}
+                <!-- A nice fallback if a new product is added without an image -->
+                <div class="w-full h-full flex items-center justify-center bg-slate-200 text-slate-400 font-bold">
+                    Fresh Produce
+                </div>
             {% endif %}
-            
-            <!-- This fallback sits behind the image. If the image loads, it covers this. If it fails, this shows. -->
-            <span class="text-5xl text-slate-300 z-0">
-                {% if product.category == 'VEGETABLES' %}🥬
-                {% elif product.category == 'FRUITS' %}🍎
-                {% elif product.category == 'GRAINS' %}🌾
-                {% elif product.category == 'LEGUMES' %}🫘
-                {% elif product.category == 'TOMATOES' %}🍅
-                {% else %}🌱{% endif %}
-            </span>
         </div>
+
         <div class="p-4 flex-grow flex flex-col">
             <h3 class="text-lg font-bold text-slate-800">{{ product.product_name }}</h3>
             <p class="text-xs text-slate-500 mb-2">{{ product.farmer.username }} - {{ product.get_category_display }}</p>

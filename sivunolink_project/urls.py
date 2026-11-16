@@ -5,6 +5,8 @@ from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
 from core import views
 
+from django.urls import path, include
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('contact/', views.contact_us, name='contact_us'),
@@ -19,6 +21,7 @@ urlpatterns = [
     # Authentication
     path('accounts/login/', views.CustomLoginView.as_view(), name='login'),
     path('accounts/logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('accounts/', include('allauth.urls')),
     path('accounts/verify-otp/', views.verify_otp_view, name='verify_otp'),
     path('register/', views.register_buyer, name='register'),
     

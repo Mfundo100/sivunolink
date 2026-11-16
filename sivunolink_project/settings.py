@@ -32,7 +32,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'core', # SivunoLink App
+    
+    # Required for allauth
+    'django.contrib.sites', 
+    
+    # Allauth apps
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+    
+    # Your App
+    'core',
 ]
 
 MIDDLEWARE = [
@@ -44,6 +55,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+     'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'sivunolink_project.urls'
@@ -119,3 +132,21 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # Authentication Redirects
 LOGIN_REDIRECT_URL = '/'  
 LOGOUT_REDIRECT_URL = '/' 
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
+SITE_ID = 1
+
+# Allauth settings
+LOGIN_REDIRECT_URL = '/dashboard/' # Where to go after Google Login
+ACCOUNT_LOGOUT_REDIRECT_URL = '/'
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': ['profile', 'email'],
+        'AUTH_PARAMS': {'access_type': 'online'},
+    }
+}

@@ -659,18 +659,62 @@ def toggle_user_status(request, user_id):
             messages.success(request, f"User {target_user.username} status changed.")
     return redirect('admin_users')
 
+# 1. UPDATED BUYER VIEW (Captures the reason)
 @login_required
 def raise_dispute(request, order_id):
     if request.method == 'POST':
+        reason = request.POST.get('dispute_reason', 'No reason provided.')
         order = get_object_or_404(Order, id=order_id, buyer=request.user)
+        
         order.status = 'DISPUTED'
         order.save()
         
         if hasattr(order, 'escrow'):
-            order.escrow.status = 'DISPUTED'
-            order.escrow.save()
+            escrow = order.escrow
+            escrow.status = 'DISPUTED'
+            escrow.dispute_reason = reason
+            escrow.save()
             
         AuditLog.objects.create(actor=request.user, action="Raised Dispute", target_entity=f"Order #{order.id}")
         messages.error(request, "Dispute raised. Funds are now frozen in Escrow pending Admin review.")
         
     return redirect('dashboard')
+
+# 2. NEW ADMIN VIEW (List all disputes)
+@login_required
+def admin_disputes(request):
+    if not request.user.is_superuser: return redirect('dashboard')
+    
+    # Get all escrow transactions that are currently in dispute
+    disputed_escrows = EscrowTransaction.objects.filter(status='DISPUTED').order_by('-date_updated')
+    
+    return render(request, 'admin_disputes.html', {'escrows': disputed_escrows})
+
+# 3. NEW ADMIN VIEW (Resolve a specific dispute)
+@login_required
+def resolve_dispute(request, escrow_id):
+    if not request.user.is_superuser: return redirect('dashboard')
+    
+    if request.method == 'POST':
+        escrow = get_object_or_404(EscrowTransaction, id=escrow_id)
+        resolution_note = request.POST.get('resolution_note', 'Resolved by Admin.')
+        action = request.POST.get('action')
+        
+        # Save the Admin's note
+        escrow.admin_resolution_notes = resolution_note
+        
+        if action == 'release':
+            escrow.status = 'RELEASED'
+            escrow.order.status = 'Completed'
+            messages.success(request, f"Funds released to Farmer for Order #{escrow.order.id}.")
+        elif action == 'refund':
+            escrow.status = 'REFUNDED'
+            escrow.order.status = 'Cancelled'
+            messages.success(request, f"Funds refunded to Buyer for Order #{escrow.order.id}.")
+            
+        escrow.save()
+        escrow.order.save()
+        
+        AuditLog.objects.create(actor=request.user, action=f"Resolved Dispute ({action.upper()})", target_entity=f"Order #{escrow.order.id}")
+        
+    return redirect('admin_disputes')

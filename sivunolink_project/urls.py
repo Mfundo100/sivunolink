@@ -29,6 +29,10 @@ urlpatterns = [
     path('farmer/fulfilments/', views.farmer_fulfilments, name='farmer_fulfilments'),
     path('farmer/complete-fulfilment/<int:fulfilment_id>/', views.complete_fulfilment, name='complete_fulfilment'),
     path('archive-order/<int:order_id>/', views.archive_order, name='archive_order'),
+
+        # Dispute Management
+    path('admin-dashboard/disputes/', views.admin_disputes, name='admin_disputes'),
+    path('admin-dashboard/disputes/resolve/<int:escrow_id>/', views.resolve_dispute, name='resolve_dispute'),
     
     # Custom Admin Hub
     path('admin-dashboard/settings/', views.custom_admin_settings, name='custom_admin_settings'),

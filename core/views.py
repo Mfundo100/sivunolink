@@ -499,14 +499,16 @@ def buyer_history(request):
 def delete_order(request, order_id):
     if request.method == 'POST':
         order = get_object_or_404(Order, id=order_id, buyer=request.user)
-        # Security check: Can only delete if Completed or Cancelled
-        if order.status in ['Completed', 'Cancelled']:
+        
+        # Allow deletion of Pending (unpaid), Completed, and Cancelled orders
+        if order.status in ['Pending', 'Completed', 'Cancelled']:
             order.delete()
-            messages.success(request, "Order permanently deleted from your history.")
+            messages.success(request, "Order permanently deleted from your account.")
         else:
-            messages.error(request, "You cannot delete an active order.")
-    return redirect('buyer_history')
-
+            messages.error(request, "You cannot delete an order that is currently in Escrow, in transit, or under dispute.")
+            
+    # Redirect back to wherever the user came from (Dashboard or History)
+    return redirect(request.META.get('HTTP_REFERER', 'dashboard'))
 # --- DRIVER PORTAL LOGIC ---
 @login_required
 @role_required(['DRIVER'])

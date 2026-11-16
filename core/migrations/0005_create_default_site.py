@@ -12,10 +12,12 @@ def create_default_site(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('core', '0002_previous_migration_name'),  # Replace with your last migration name
+        ('core', ' 0004_alter_producelisting_category'),  # Replace with your last migration name
         ('sites', '0002_alter_domain_unique'),
     ]
 
     operations = [
         migrations.RunPython(create_default_site),
     ]
+
+   

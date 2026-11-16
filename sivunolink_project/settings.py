@@ -17,7 +17,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY & PRODUCTION SETTINGS
 # ==========================================
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-fallback-key')
-DEBUG = os.environ.get('DEBUG', 'True') == 'True' # Defaults to True locally
+DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true' # Defaults to True locally
 ALLOWED_HOSTS = ['*'] # Render will provide the domain
 
 # CRITICAL FOR RENDER: Prevents CSRF errors and infinite redirect loops

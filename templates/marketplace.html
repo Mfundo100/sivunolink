@@ -39,6 +39,12 @@
                 <img src="{% static 'images/products/butternut.jpg' %}" alt="Butternut" class="w-full h-full object-cover">
             {% elif "chill" in product.product_name|lower %}
                 <img src="{% static 'images/products/chillies.jpg' %}" alt="Chillies" class="w-full h-full object-cover">
+            {% elif "chard" in product.product_name|lower %}
+                <img src="{% static 'images/products/swiss_chard.jpg' %}" alt="Swiss Chard" class="w-full h-full object-cover">
+            {% elif "carrot" in product.product_name|lower %}
+                <img src="{% static 'images/products/carrots.jpg' %}" alt="Carrots" class="w-full h-full object-cover">
+            {% elif "banana" in product.product_name|lower %}
+                <img src="{% static 'images/products/bananas.jpg' %}" alt="Bananas" class="w-full h-full object-cover">
             {% else %}
                 <!-- A nice fallback if a new product is added without an image -->
                 <div class="w-full h-full flex items-center justify-center bg-slate-200 text-slate-400 font-bold">

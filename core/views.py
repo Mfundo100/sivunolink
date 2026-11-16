@@ -532,7 +532,7 @@ def verify_otp_view(request):
             otp_record.is_used = True
             otp_record.save()
             
-            # SAFE USER LOGIN
+            # SAFE USER LOGIN (Prevents 500 error if user was deleted)
             try:
                 user = User.objects.get(id=user_id)
                 login(request, user)
@@ -548,7 +548,6 @@ def verify_otp_view(request):
     simulated_code = latest_otp.otp_code if latest_otp else None
     
     return render(request, 'registration/verify_otp.html', {'simulated_code': simulated_code})
-
 
 # --- ADMIN HUB & SUBPAGES ---
 @login_required

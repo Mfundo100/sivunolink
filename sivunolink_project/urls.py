@@ -5,23 +5,12 @@ from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
 from core import views
 
-from django.urls import path, include
-
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('contact/', views.contact_us, name='contact_us'),
-    path('admin-dashboard/delete-user/<int:user_id>/', views.delete_user, name='delete_user'),
-
-        # Password Reset Routing
-    path('accounts/password_reset/', auth_views.PasswordResetView.as_view(template_name='registration/password_reset_form.html'), name='password_reset'),
-    path('accounts/password_reset/done/', auth_views.PasswordResetDoneView.as_view(template_name='registration/password_reset_done.html'), name='password_reset_done'),
-    path('accounts/reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='registration/password_reset_confirm.html'), name='password_reset_confirm'),
-    path('accounts/reset/done/', auth_views.PasswordResetCompleteView.as_view(template_name='registration/password_reset_complete.html'), name='password_reset_complete'),
     
-    # Authentication
+    # Authentication (Standard)
     path('accounts/login/', views.CustomLoginView.as_view(), name='login'),
     path('accounts/logout/', auth_views.LogoutView.as_view(), name='logout'),
-    path('accounts/', include('allauth.urls')),
     path('accounts/verify-otp/', views.verify_otp_view, name='verify_otp'),
     path('register/', views.register_buyer, name='register'),
     
@@ -33,18 +22,12 @@ urlpatterns = [
     path('cart/', views.cart_view, name='cart'),
     path('remove-from-cart/<int:product_id>/', views.remove_from_cart, name='remove_from_cart'),
     path('checkout/', views.checkout_view, name='checkout'),
-    path('verify-delivery/', views.verify_delivery_pin_view, name='verify_delivery'),
+    path('verify-pin/<int:order_id>/', views.verify_delivery_pin_view, name='verify_pin'),
     path('driver-portal/', views.driver_portal, name='driver_portal'),
     path('dispute/<int:order_id>/', views.raise_dispute, name='raise_dispute'),
-    
-    # NEW ROUTES: Payment Gateway
     path('payment/process/<int:order_id>/', views.process_payment, name='process_payment'),
-    
-    # NEW ROUTES: Farmer Fulfilments
     path('farmer/fulfilments/', views.farmer_fulfilments, name='farmer_fulfilments'),
     path('farmer/complete-fulfilment/<int:fulfilment_id>/', views.complete_fulfilment, name='complete_fulfilment'),
-    
-    # NEW ROUTES: Archiving
     path('archive-order/<int:order_id>/', views.archive_order, name='archive_order'),
     
     # Custom Admin Hub
@@ -54,11 +37,10 @@ urlpatterns = [
     path('admin-dashboard/assign/', views.admin_driver_assignment, name='admin_driver_assignment'),
     path('admin-dashboard/monitor/', views.admin_monitoring, name='admin_monitoring'),
     path('admin-dashboard/toggle-user/<int:user_id>/', views.toggle_user_status, name='toggle_user'),
-    
-    # NEW ROUTES: Admin Reports & Settings
     path('admin-dashboard/reports/', views.admin_reports, name='admin_reports'),
     path('admin-dashboard/export-csv/', views.export_csv, name='export_csv'),
     path('admin-dashboard/settings/commission/', views.admin_settings, name='admin_settings'),
+    path('admin-dashboard/delete-user/<int:user_id>/', views.delete_user, name='delete_user'),
 ]
 
 if settings.DEBUG:

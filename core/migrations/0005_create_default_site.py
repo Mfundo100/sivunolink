@@ -2,10 +2,16 @@ from django.db import migrations, connection
 
 def reset_site_table(apps, schema_editor):
     with connection.cursor() as cursor:
-        # 1. Delete everything in the site table to clear out any duplicate domains
+        # 1. Clear the link between SocialApps and Sites (breaks the foreign key constraint)
+        cursor.execute("DELETE FROM socialaccount_socialapp_sites;")
+        
+        # 2. Delete the SocialApps themselves (we will recreate this in Admin later)
+        cursor.execute("DELETE FROM socialaccount_socialapp;")
+        
+        # 3. Now it is safe to delete the Sites
         cursor.execute("DELETE FROM django_site;")
         
-        # 2. Insert the correct site with ID 1
+        # 4. Insert the perfect Site with ID 1
         cursor.execute("""
             INSERT INTO django_site (id, domain, name) 
             VALUES (1, 'sivunolink-app.onrender.com', 'SivunoLink');

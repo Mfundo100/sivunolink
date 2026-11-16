@@ -1,6 +1,7 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from .models import User
+
 
 class BuyerSignUpForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
@@ -13,3 +14,14 @@ class BuyerSignUpForm(UserCreationForm):
         if commit:
             user.save()
         return user
+
+
+# NEW: Custom Form to handle Suspended Accounts
+class CustomAuthenticationForm(AuthenticationForm):
+    def confirm_login_allowed(self, user):
+        if not user.is_active:
+            raise forms.ValidationError(
+                "Your account has been suspended by the SivunoLink Administration. Please contact support for assistance.",
+                code='inactive',
+            )
+        super().confirm_login_allowed(user)

@@ -13,6 +13,9 @@ from django.http import HttpResponse
 from django.utils import timezone
 from django.utils.crypto import get_random_string
 
+# Update your imports at the top
+from .forms import BuyerSignUpForm, CustomAuthenticationForm
+
 # Update this line to include your new models!
 from .models import (
     Order, OrderItem, ProduceListing, User, EscrowTransaction, AuditLog, 
@@ -582,7 +585,9 @@ def driver_portal(request):
 # --- CUSTOM 2FA LOGIN FLOW ---
 class CustomLoginView(LoginView):
     template_name = 'registration/login.html'
+    authentication_form = CustomAuthenticationForm # <--- ADD THIS LINE
     def form_valid(self, form):
+        # ... [keep your existing OTP logic here] ...
         user = form.get_user()
         OTPRecord.objects.create(user=user, otp_code=str(random.randint(100000, 999999)))
         self.request.session['pre_2fa_user_id'] = user.id

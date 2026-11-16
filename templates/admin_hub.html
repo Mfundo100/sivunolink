@@ -55,14 +55,14 @@
             <a href="{% url 'admin_reports' %}" class="bg-green-700 hover:bg-green-800 text-white text-center py-2 rounded-lg font-semibold transition">{{ t.btn_reports }} →</a>
         </div>
 
-        <!-- NEW Card 6: Dispute Resolution -->
+        <!-- Card 6: Dispute Resolution -->
         <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col h-full hover:shadow-md transition">
             <div class="flex items-center gap-3 mb-3">
                 <span class="text-2xl">⚖️</span>
-                <h3 class="text-lg font-bold text-slate-800">Dispute Resolution</h3>
+                <h3 class="text-lg font-bold text-slate-800">{{ t.card_disputes }}</h3>
             </div>
-            <p class="text-sm text-slate-500 mb-6 flex-grow">Review frozen Escrow funds and mediate between buyers and farmers.</p>
-            <a href="{% url 'admin_disputes' %}" class="bg-red-600 hover:bg-red-700 text-white text-center py-2 rounded-lg font-semibold transition">Manage Disputes →</a>
+            <p class="text-sm text-slate-500 mb-6 flex-grow">{{ t.card_disputes_desc }}</p>
+            <a href="{% url 'admin_disputes' %}" class="bg-red-600 hover:bg-red-700 text-white text-center py-2 rounded-lg font-semibold transition">{{ t.btn_disputes }} →</a>
         </div>
 
     </div>

@@ -23,6 +23,9 @@ from .forms import BuyerSignUpForm
 # --- LIGHTWEIGHT I18N DICTIONARY ---
 LANG_DICT = {
     'en': {
+        'card_disputes': 'Dispute Resolution',
+        'card_disputes_desc': 'Review frozen Escrow funds and mediate between buyers and farmers.',
+        'btn_disputes': 'Manage Disputes',
         'title': 'Buyer Dashboard', 'welcome': 'Welcome back! Browse the marketplace below.',
         'secure': 'Secure in Escrow', 'dispute': 'Open Dispute', 'marketplace': 'Marketplace', 'cart': 'Cart',
         'admin_title': 'Platform Administration', 'user_mgmt': 'User Management', 'recent_actions': 'Recent Platform Actions',
@@ -53,6 +56,9 @@ LANG_DICT = {
         'dashboard_btn': 'Go to Dashboard'
     },
     'sz': {
+        'card_disputes': 'Kucocwa Kwetingxabano',
+        'card_disputes_desc': 'Buka imali lefrijile ye-Escrow bese wenta simediyetha emkhatsini webatsengi nebomaNguni.',
+        'btn_disputes': 'Phatsa Tingxabano',
         'title': 'Ikhasi Lephasi', 'welcome': 'Siyakwamukela! Buka imakethe ngezansi.',
         'my_fulfilments': 'Kugcwaliseka Kwema-oda Ami',
         'gross_amount': 'Imali Iyonkhe',

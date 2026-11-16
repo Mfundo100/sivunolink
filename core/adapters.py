@@ -3,25 +3,32 @@ from django.contrib.auth import get_user_model
 import uuid
 
 class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
+    def pre_social_login(self, request, sociallogin):
+        # If the user is already logged in, skip
+        if request.user.is_authenticated:
+            return
+        
+        email = sociallogin.account.extra_data.get('email')
+        if email:
+            User = get_user_model()
+            # Use filter().first() instead of get() to avoid MultipleObjectsReturned crashes
+            user = User.objects.filter(email=email).first()
+            if user:
+                # Connect the Google account to the existing user
+                sociallogin.connect(request, user)
+
     def save_user(self, request, sociallogin, form=None):
-        # 1. Let allauth save the user first, but don't commit to DB yet
+        # Let allauth create the user object
         user = super().save_user(request, sociallogin, form, commit=False)
         
-        # 2. Check if the user already exists (e.g., linking account)
-        User = get_user_model()
-        if User.objects.filter(username=user.username).exists():
-            existing_user = User.objects.get(username=user.username)
-            # If the user exists, just return them (no need to change phone number)
-            return existing_user
-
-        # 3. Generate a unique placeholder phone number
-        # Format: 7600 followed by a random 6-digit number
-        unique_phone = f"7600{uuid.uuid4().hex[:6].upper()}"
-        user.phone_number = unique_phone
-        
-        # 4. Ensure the user is marked as verified (optional, but useful)
+        # Generate a unique phone number if missing
+        if not user.phone_number:
+            user.phone_number = f"76{uuid.uuid4().hex[:8].upper()}"
+            
+        # Generate a unique username if missing (Google doesn't provide usernames)
+        if not user.username:
+            user.username = f"user_{uuid.uuid4().hex[:6]}"
+            
         user.is_verified = True
-        
-        # 5. Save the user safely
         user.save()
         return user

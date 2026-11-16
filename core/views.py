@@ -518,21 +518,37 @@ def delete_user(request, user_id):
             messages.success(request, "User permanently deleted.")
     return redirect('admin_users')
 
-
 def verify_otp_view(request):
     user_id = request.session.get('pre_2fa_user_id')
-    if not user_id: return redirect('login')
+    
+    if not user_id:
+        return redirect('login')
+        
     if request.method == 'POST':
+        submitted_otp = request.POST.get('otp')
         otp_record = OTPRecord.objects.filter(user_id=user_id, is_used=False).order_by('-created_at').first()
-        if otp_record and otp_record.otp_code == request.POST.get('otp'):
+        
+        if otp_record and otp_record.otp_code == submitted_otp:
             otp_record.is_used = True
             otp_record.save()
-            login(request, User.objects.get(id=user_id))
-            request.session.pop('pre_2fa_user_id', None)
-            return redirect('dashboard')
-        messages.error(request, "Invalid OTP.")
+            
+            # SAFE USER LOGIN
+            try:
+                user = User.objects.get(id=user_id)
+                login(request, user)
+                request.session.pop('pre_2fa_user_id', None)
+                return redirect('dashboard')
+            except User.DoesNotExist:
+                messages.error(request, "User session expired. Please log in again.")
+                return redirect('login')
+        else:
+            messages.error(request, "Invalid or expired OTP. Please try again.")
+            
     latest_otp = OTPRecord.objects.filter(user_id=user_id, is_used=False).order_by('-created_at').first()
-    return render(request, 'registration/verify_otp.html', {'simulated_code': latest_otp.otp_code if latest_otp else None})
+    simulated_code = latest_otp.otp_code if latest_otp else None
+    
+    return render(request, 'registration/verify_otp.html', {'simulated_code': simulated_code})
+
 
 # --- ADMIN HUB & SUBPAGES ---
 @login_required

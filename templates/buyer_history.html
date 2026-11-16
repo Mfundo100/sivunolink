@@ -48,6 +48,15 @@
                 <div class="bg-red-50 text-red-800 p-3 rounded-lg border border-red-200 text-sm text-center font-bold mb-4">
                     ❌ Order Cancelled
                 </div>
+                
+                <!-- NEW: Display Admin Resolution Note if it exists -->
+                {% if order.escrow and order.escrow.admin_resolution_notes %}
+                <div class="bg-blue-50 border border-blue-200 p-3 rounded-lg mb-4">
+                    <p class="text-sm font-bold text-blue-800 mb-1">💬 Message from Admin:</p>
+                    <p class="text-xs text-blue-700 italic">"{{ order.escrow.admin_resolution_notes }}"</p>
+                </div>
+                {% endif %}
+                
                 {% endif %}
 
                 <!-- Delete Button -->

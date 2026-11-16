@@ -414,10 +414,34 @@ def register_buyer(request):
     return render(request, 'registration/register.html', {'form': form})
 
 def landing_page(request):
-    if request.user.is_authenticated: return redirect('dashboard')
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+        
     lang = request.GET.get('lang', request.session.get('lang', 'en'))
+    request.session['lang'] = lang
     translations = LANG_DICT.get(lang, LANG_DICT['en'])
-    return render(request, 'landing.html', {'t': translations, 'current_lang': lang})
+    
+    # Fetch the 3 most recently listed available produce items
+    featured_produce = ProduceListing.objects.filter(status='Available').order_by('-created_at')[:3]
+    
+    return render(request, 'landing.html', {
+        't': translations, 
+        'current_lang': lang,
+        'featured_produce': featured_produce
+    })
+
+def contact_us(request):
+    return render(request, 'contact.html')
+    
+    # NEW: Fetch the 3 most recently listed produce items
+    featured_produce = ProduceListing.objects.filter(status='Available').order_by('-created_at')[:3]
+    
+    return render(request, 'landing.html', {
+        't': translations, 
+        'current_lang': lang,
+        'featured_produce': featured_produce # Pass to template
+    })
+
 # Update your LANG_DICT by adding these keys:
 # 'en': { ..., 'my_orders': 'My Recent Orders', 'no_orders': 'You have not placed any orders yet.', 'view_marketplace': 'Visit Marketplace', 'order_status': 'Status', 'driver': 'Driver', 'total_amount': 'Total Amount' }
 # 'sz': { ..., 'my_orders': 'Ema-oda Ami', 'no_orders': 'Awukafaki ma-oda nyalo.', 'view_marketplace': 'Buka Imakethe', 'order_status': 'Simo', 'driver': 'Umshayeli', 'total_amount': 'Imali Iyonkhe' }
@@ -483,6 +507,17 @@ class CustomLoginView(LoginView):
         OTPRecord.objects.create(user=user, otp_code=str(random.randint(100000, 999999)))
         self.request.session['pre_2fa_user_id'] = user.id
         return redirect('verify_otp')
+
+@login_required
+def delete_user(request, user_id):
+    if not request.user.is_superuser: return redirect('dashboard')
+    if request.method == 'POST':
+        target_user = get_object_or_404(User, id=user_id)
+        if target_user != request.user:
+            target_user.delete()
+            messages.success(request, "User permanently deleted.")
+    return redirect('admin_users')
+
 
 def verify_otp_view(request):
     user_id = request.session.get('pre_2fa_user_id')

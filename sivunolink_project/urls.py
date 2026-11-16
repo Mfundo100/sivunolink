@@ -7,6 +7,14 @@ from core import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('contact/', views.contact_us, name='contact_us'),
+    path('admin-dashboard/delete-user/<int:user_id>/', views.delete_user, name='delete_user'),
+
+        # Password Reset Routing
+    path('accounts/password_reset/', auth_views.PasswordResetView.as_view(template_name='registration/password_reset_form.html'), name='password_reset'),
+    path('accounts/password_reset/done/', auth_views.PasswordResetDoneView.as_view(template_name='registration/password_reset_done.html'), name='password_reset_done'),
+    path('accounts/reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='registration/password_reset_confirm.html'), name='password_reset_confirm'),
+    path('accounts/reset/done/', auth_views.PasswordResetCompleteView.as_view(template_name='registration/password_reset_complete.html'), name='password_reset_complete'),
     
     # Authentication
     path('accounts/login/', views.CustomLoginView.as_view(), name='login'),

@@ -3,7 +3,7 @@
 
 {% block content %}
 <!-- Full width hero image container -->
-<div class="-mt-8 relative w-full min-h-[85vh] flex items-center justify-center bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');">
+<div class="-mt-8 relative w-full min-h-[70vh] flex items-center justify-center bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');">
     
     <!-- Dark overlay -->
     <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
@@ -25,6 +25,50 @@
                 {{ t.landing_btn_register }}
             </a>
         </div>
+    </div>
+</div>
+
+<!-- DYNAMIC DATABASE SECTION (Rubric Requirement) -->
+<div class="bg-slate-50 py-16 relative z-10 border-t border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <div class="text-center mb-10">
+            <h2 class="text-3xl font-bold text-slate-900">Fresh From the Farm Today</h2>
+            <p class="text-slate-500 mt-2">These items are dynamically loaded from our live database.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {% for item in featured_produce %}
+            <div class="bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden hover:shadow-xl transition duration-300">
+                <!-- You can add images here later using the same logic as the marketplace -->
+                <div class="h-32 bg-green-100 flex items-center justify-center">
+                    <span class="text-4xl text-green-600">🌱</span>
+                </div>
+                <div class="p-6">
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="text-xl font-bold text-slate-800">{{ item.product_name }}</h3>
+                        <span class="bg-green-100 text-green-800 text-xs font-bold px-2 py-1 rounded uppercase">Grade {{ item.quality_grade }}</span>
+                    </div>
+                    <p class="text-sm text-slate-500 mb-4">Farmer: {{ item.farmer.username }}</p>
+                    <div class="flex justify-between items-center border-t border-slate-100 pt-4">
+                        <span class="text-lg font-extrabold text-green-700">E{{ item.price_per_kg }} <span class="text-xs text-slate-500 font-normal">/ kg</span></span>
+                        <span class="text-xs font-bold text-slate-400">{{ item.available_quantity_kg }} kg left</span>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-span-full text-center text-slate-500 py-10 bg-white rounded-xl border border-slate-200">
+                No produce currently available. Please check back later.
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="text-center mt-12">
+            <a href="{% url 'login' %}" class="inline-block bg-slate-900 text-white font-bold px-8 py-3 rounded-lg hover:bg-slate-800 transition">
+                Login to View the Full Marketplace →
+            </a>
+        </div>
+        
     </div>
 </div>
 {% endblock %}

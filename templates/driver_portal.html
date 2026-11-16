@@ -1,76 +1,39 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="max-w-5xl mx-auto mt-8">
-    <!-- Header & Availability Toggle -->
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-        <div>
-            <h1 class="text-3xl font-bold text-slate-900">{{ t.driver_title }}</h1>
-            <p class="text-slate-500 mt-1">{{ t.driver_welcome }} ({{ request.user.username }})</p>
-        </div>
+<div class="max-w-4xl mx-auto mt-8">
+    <h1 class="text-3xl font-bold text-slate-900 mb-2">Driver Logistics Hub</h1>
+    <p class="text-slate-500 mb-8">Manage your active deliveries here. ({{ request.user.username }})</p>
+
+    <!-- Verification Form -->
+    <div class="bg-slate-800 rounded-xl p-6 mb-8 shadow-lg text-white">
+        <h2 class="text-xl font-bold mb-4">Verify Delivery & Release Funds</h2>
+        <p class="text-sm text-slate-300 mb-4">Enter Order Number and PIN to unlock Escrow.</p>
         
-        <form method="POST" class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex items-center gap-4">
+        <form method="POST" action="{% url 'verify_delivery' %}" class="flex flex-col sm:flex-row gap-4">
             {% csrf_token %}
-            <div>
-                <p class="text-sm font-bold text-slate-700">Availability Status</p>
-                <p class="text-xs {% if request.user.is_available %}text-green-600{% else %}text-red-600{% endif %} font-semibold">
-                    {% if request.user.is_available %}🟢 Online & Ready for Pickups{% else %}🔴 Offline{% endif %}
-                </p>
-            </div>
-            <button type="submit" name="toggle_availability" class="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-bold transition">
-                Toggle
-            </button>
+            <input type="text" name="order_id" placeholder="Order # (e.g. 12)" required class="flex-1 px-4 py-3 rounded-lg text-slate-900 font-bold outline-none focus:ring-2 focus:ring-green-500">
+            <input type="text" name="pin" maxlength="4" placeholder="PIN" required class="w-full sm:w-32 px-4 py-3 rounded-lg text-slate-900 font-bold text-center tracking-widest outline-none focus:ring-2 focus:ring-green-500">
+            <button type="submit" class="bg-green-600 hover:bg-green-500 text-white font-bold px-6 py-3 rounded-lg shadow-sm transition">Confirm & Release</button>
         </form>
     </div>
 
-    <!-- Deliveries List -->
-    <div class="grid grid-cols-1 gap-6">
-        {% for delivery in deliveries %}
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                <div class="bg-slate-900 px-6 py-4 flex justify-between items-center">
-                    <h2 class="text-white font-bold">{{ t.active_delivery }} #{{ delivery.id }}</h2>
-                    <span class="bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">Assigned</span>
-                </div>
-                
-                <div class="p-6">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                        <div>
-                            <p class="text-xs text-slate-400 uppercase font-bold">{{ t.buyer_label }}</p>
-                            <p class="font-medium text-slate-800">{{ delivery.buyer.username }}</p>
-                            <p class="text-sm text-slate-500">{{ delivery.buyer.phone_number }}</p>
-                        </div>
-                        <div>
-                            <p class="text-xs text-slate-400 uppercase font-bold">{{ t.pickup_label }}</p>
-                            <p class="font-medium text-slate-800">{{ t.rural_farm }}</p>
-                        </div>
-                        <div>
-                            <p class="text-xs text-slate-400 uppercase font-bold">{{ t.dest_label }}</p>
-                            <p class="font-medium text-slate-800">{{ t.urban_hub }}</p>
-                        </div>
-                    </div>
-
-                    <!-- PIN Verification Form -->
-                    <div class="bg-slate-50 p-5 rounded-lg border border-slate-200">
-                        <h3 class="font-bold text-slate-800 mb-1">{{ t.verify_delivery }}</h3>
-                        <p class="text-sm text-slate-500 mb-4">{{ t.pin_instructions }}</p>
-                        
-                        <form method="POST" action="{% url 'verify_delivery' delivery.id %}" class="flex flex-col sm:flex-row gap-3 items-center">
-                            {% csrf_token %}
-                            <input type="text" name="pin" maxlength="4" required class="w-full sm:w-32 text-center text-2xl tracking-widest font-bold px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition" placeholder="----">
-                            <button type="submit" class="w-full sm:w-auto bg-green-700 hover:bg-green-800 text-white px-6 py-2.5 rounded-lg font-bold transition shadow-sm">
-                                {{ t.confirm_release }}
-                            </button>
-                        </form>
-                    </div>
-                </div>
+    <!-- Active Deliveries List -->
+    <h2 class="text-xl font-bold mb-4">Active Deliveries</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {% for order in deliveries %}
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+            <div class="flex justify-between items-start mb-2">
+                <h3 class="font-bold text-lg text-slate-800">Order #{{ order.id }}</h3>
+                <span class="bg-yellow-100 text-yellow-800 text-xs font-bold px-2 py-1 rounded">{{ order.status }}</span>
             </div>
+            <p class="text-sm text-slate-600 mb-1"><strong>Buyer:</strong> {{ order.buyer.username }}</p>
+            <p class="text-sm text-slate-600 mb-3"><strong>Destination:</strong> Urban Hub</p>
+        </div>
         {% empty %}
-            <!-- Empty State -->
-            <div class="bg-blue-50 text-blue-800 p-8 rounded-xl border border-blue-200 text-center">
-                <svg class="w-16 h-16 mx-auto text-blue-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
-                <p class="font-bold text-lg">{{ t.no_deliveries }}</p>
-                <p class="text-sm mt-1">{{ t.no_deliveries_sub }}</p>
-            </div>
+        <div class="col-span-full bg-blue-50 text-blue-800 p-6 rounded-lg text-center font-bold">
+            No Active Deliveries. You have no orders assigned to you at the moment.
+        </div>
         {% endfor %}
     </div>
 </div>

@@ -447,7 +447,7 @@ def contact_us(request):
 # 'sz': { ..., 'my_orders': 'Ema-oda Ami', 'no_orders': 'Awukafaki ma-oda nyalo.', 'view_marketplace': 'Buka Imakethe', 'order_status': 'Simo', 'driver': 'Umshayeli', 'total_amount': 'Imali Iyonkhe' }
 
 def dashboard(request):
-    if not request.user.is_authenticated:
+    if not request.user.is_authenticated: 
         return redirect('landing_page')
     if request.user.is_superuser: 
         return redirect('custom_admin_settings')
@@ -455,18 +455,16 @@ def dashboard(request):
     lang = request.GET.get('lang', request.session.get('lang', 'en'))
     request.session['lang'] = lang
     translations = LANG_DICT.get(lang, LANG_DICT['en'])
-    
-    context = {
-        't': translations,
-        'current_lang': lang
-    }
+    context = {'t': translations, 'current_lang': lang}
 
     # RBAC Routing
     if request.user.role == 'DRIVER':
+        # Fetch a LIST of active orders assigned to this driver
         active_orders = Order.objects.filter(
             matched_driver=request.user, 
-            status__in=['Assigned', 'In Transit']
+            status__in=['Pending', 'Assigned', 'In Transit']
         ).order_by('-created_at')
+        
         context['driver_orders'] = active_orders
         return render(request, 'driver_dashboard.html', context)
         
@@ -477,12 +475,9 @@ def dashboard(request):
         context['buyer_orders'] = recent_orders
         return render(request, 'dashboard.html', context)
 
-    # NEW: FARMER ROUTING
     elif request.user.role == 'FARMER':
-        # Send them to their fulfilments page
         return redirect('farmer_fulfilments')
 
-    # Fallback
     return redirect('landing_page')
 
 # --- DRIVER PORTAL LOGIC ---

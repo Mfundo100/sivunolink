@@ -46,6 +46,3 @@ admin.site.register(OTPRecord)
 admin.site.register(Rating)
 admin.site.register(OrderItem)
 admin.site.register(User, CustomUserAdmin)
-
-from django.contrib.sites.models import Site
-admin.site.register(Site)

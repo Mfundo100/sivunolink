@@ -23,6 +23,13 @@ from .forms import BuyerSignUpForm
 # --- LIGHTWEIGHT I18N DICTIONARY ---
 LANG_DICT = {
     'en': {
+                # Landing Page Featured Section
+        'featured_title': 'Fresh From the Farm Today',
+        'featured_sub': 'These items are dynamically loaded from our live database.',
+        'grade_label': 'GRADE',
+        'farmer_label': 'Farmer:',
+        'kg_left': 'kg left',
+        'btn_login_market': 'Login to View the Full Marketplace',
         'card_disputes': 'Dispute Resolution',
         'card_disputes_desc': 'Review frozen Escrow funds and mediate between buyers and farmers.',
         'btn_disputes': 'Manage Disputes',
@@ -56,6 +63,13 @@ LANG_DICT = {
         'dashboard_btn': 'Go to Dashboard'
     },
     'sz': {
+                # Landing Page Featured Section (siSwati)
+        'featured_title': 'Kudla Lokuphuma Emapulazini Namuhla',
+        'featured_sub': 'Loku kudla kucocwa kusuka ku-database yethu yesikhathi sangempela.',
+        'grade_label': 'IBANGA',
+        'farmer_label': 'UmNguni:',
+        'kg_left': 'kg sekusele',
+        'btn_login_market': 'Ngena ukuze ubone yonkhe imakethe',
         'card_disputes': 'Kucocwa Kwetingxabano',
         'card_disputes_desc': 'Buka imali lefrijile ye-Escrow bese wenta simediyetha emkhatsini webatsengi nebomaNguni.',
         'btn_disputes': 'Phatsa Tingxabano',

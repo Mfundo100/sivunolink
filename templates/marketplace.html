@@ -46,7 +46,6 @@
             {% elif "banana" in product.product_name|lower %}
                 <img src="{% static 'images/products/bananas.jpg' %}" alt="Bananas" class="w-full h-full object-cover">
             {% else %}
-                <!-- A nice fallback if a new product is added without an image -->
                 <div class="w-full h-full flex items-center justify-center bg-slate-200 text-slate-400 font-bold">
                     Fresh Produce
                 </div>
@@ -54,7 +53,12 @@
         </div>
 
         <div class="p-4 flex-grow flex flex-col">
-            <h3 class="text-lg font-bold text-slate-800">{{ product.product_name }}</h3>
+            <!-- UPDATED: Added flex layout for Title and Grade Badge -->
+            <div class="flex justify-between items-start mb-2">
+                <h3 class="text-lg font-bold text-slate-800 leading-tight pr-2">{{ product.product_name }}</h3>
+                <span class="bg-green-100 text-green-800 text-xs font-bold px-2 py-1 rounded uppercase whitespace-nowrap">Grade {{ product.quality_grade }}</span>
+            </div>
+            
             <p class="text-xs text-slate-500 mb-2">{{ product.farmer.username }} - {{ product.get_category_display }}</p>
             <p class="text-green-700 font-bold text-lg mb-3">E{{ product.price_per_kg }} / kg</p>
             <p class="text-sm text-slate-600 mb-4 flex-grow">{{ product.available_quantity_kg }} kg available</p>

@@ -1,4 +1,5 @@
 import csv
+from django.db.models import Q
 import random
 from decimal import Decimal
 from django.shortcuts import render, get_object_or_404, redirect
@@ -105,12 +106,47 @@ LANG_DICT = {
 }
 
 # --- MARKETPLACE & CART LOGIC ---
+
 @login_required
 def marketplace_view(request):
     lang = request.GET.get('lang', request.session.get('lang', 'en'))
     translations = LANG_DICT.get(lang, LANG_DICT['en'])
+
+    # 1. Get Search and Sort Parameters
+    search_query = request.GET.get('search', '').strip()
+    sort_by = request.GET.get('sort_by', 'name')
+    order = request.GET.get('order', 'asc')
+
+    # 2. Base Query (Only show available items)
     products = ProduceListing.objects.filter(status='Available', available_quantity_kg__gt=0)
-    return render(request, 'marketplace.html', {'t': translations, 'products': products, 'current_lang': lang})
+
+    # 3. Apply Search Filter
+    if search_query:
+        products = products.filter(
+            Q(product_name__icontains=search_query) |
+            Q(category__icontains=search_query) |
+            Q(description__icontains=search_query)
+        )
+
+    # 4. Apply Sorting
+    sort_prefix = '' if order == 'asc' else '-'
+    if sort_by == 'price':
+        products = products.order_by(f'{sort_prefix}price_per_kg')
+    elif sort_by == 'category':
+        products = products.order_by(f'{sort_prefix}category')
+    else: # Default to Name
+        products = products.order_by(f'{sort_prefix}product_name')
+
+    context = {
+        't': translations,
+        'products': products,
+        'current_lang': lang,
+        'search_query': search_query,
+        'sort_by': sort_by,
+        'order': order
+    }
+    return render(request, 'marketplace.html', context)
+
 
 @login_required
 def add_to_cart(request, product_id):

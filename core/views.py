@@ -446,39 +446,66 @@ def contact_us(request):
 # 'en': { ..., 'my_orders': 'My Recent Orders', 'no_orders': 'You have not placed any orders yet.', 'view_marketplace': 'Visit Marketplace', 'order_status': 'Status', 'driver': 'Driver', 'total_amount': 'Total Amount' }
 # 'sz': { ..., 'my_orders': 'Ema-oda Ami', 'no_orders': 'Awukafaki ma-oda nyalo.', 'view_marketplace': 'Buka Imakethe', 'order_status': 'Simo', 'driver': 'Umshayeli', 'total_amount': 'Imali Iyonkhe' }
 
+
 def dashboard(request):
-    if not request.user.is_authenticated: 
-        return redirect('landing_page')
-    if request.user.is_superuser: 
-        return redirect('custom_admin_settings')
+    if not request.user.is_authenticated: return redirect('landing_page')
+    if request.user.is_superuser: return redirect('custom_admin_settings')
 
     lang = request.GET.get('lang', request.session.get('lang', 'en'))
     request.session['lang'] = lang
     translations = LANG_DICT.get(lang, LANG_DICT['en'])
     context = {'t': translations, 'current_lang': lang}
 
-    # RBAC Routing
     if request.user.role == 'DRIVER':
-        # Fetch a LIST of active orders assigned to this driver
         active_orders = Order.objects.filter(
             matched_driver=request.user, 
-            status__in=['Pending', 'Assigned', 'In Transit']
+            status__in=['Assigned', 'In Transit']
         ).order_by('-created_at')
-        
         context['driver_orders'] = active_orders
         return render(request, 'driver_dashboard.html', context)
         
     elif request.user.role == 'BUYER':
-        recent_orders = Order.objects.filter(
-            buyer=request.user
-        ).order_by('-created_at')[:5]
-        context['buyer_orders'] = recent_orders
+        # ONLY fetch Active Orders for the main dashboard
+        active_orders = Order.objects.filter(
+            buyer=request.user,
+            status__in=['Pending', 'IN_ESCROW', 'Assigned', 'In Transit', 'DISPUTED']
+        ).order_by('-created_at')
+        context['buyer_orders'] = active_orders
         return render(request, 'dashboard.html', context)
 
     elif request.user.role == 'FARMER':
         return redirect('farmer_fulfilments')
 
     return redirect('landing_page')
+
+# NEW: Buyer Order History View
+@login_required
+def buyer_history(request):
+    if request.user.role != 'BUYER': return redirect('dashboard')
+    
+    lang = request.GET.get('lang', request.session.get('lang', 'en'))
+    translations = LANG_DICT.get(lang, LANG_DICT['en'])
+    
+    # Fetch ONLY Completed or Cancelled orders
+    history_orders = Order.objects.filter(
+        buyer=request.user, 
+        status__in=['Completed', 'Cancelled']
+    ).order_by('-created_at')
+    
+    return render(request, 'buyer_history.html', {'t': translations, 'history_orders': history_orders, 'current_lang': lang})
+
+# NEW: Delete Order View
+@login_required
+def delete_order(request, order_id):
+    if request.method == 'POST':
+        order = get_object_or_404(Order, id=order_id, buyer=request.user)
+        # Security check: Can only delete if Completed or Cancelled
+        if order.status in ['Completed', 'Cancelled']:
+            order.delete()
+            messages.success(request, "Order permanently deleted from your history.")
+        else:
+            messages.error(request, "You cannot delete an active order.")
+    return redirect('buyer_history')
 
 # --- DRIVER PORTAL LOGIC ---
 @login_required

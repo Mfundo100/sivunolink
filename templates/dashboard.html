@@ -23,8 +23,14 @@
 
 <!-- Dynamic Buyer Orders Section -->
 <div class="mb-4 flex justify-between items-end">
-    <h2 class="text-2xl font-bold text-slate-800">{{ t.my_orders|default:"My Recent Orders" }}</h2>
-    <a href="{% url 'marketplace' %}" class="text-sm font-bold text-green-700 hover:underline">{{ t.view_marketplace|default:"Visit Marketplace →" }}</a>
+    <div>
+        <h2 class="text-2xl font-bold text-slate-800">Active Orders</h2>
+        <p class="text-sm text-slate-500">Orders currently in progress.</p>
+    </div>
+    <div class="flex gap-4">
+        <a href="{% url 'buyer_history' %}" class="text-sm font-bold text-slate-700 bg-white border border-slate-300 px-4 py-2 rounded-lg hover:bg-slate-50 transition">📁 Order History</a>
+        <a href="{% url 'marketplace' %}" class="text-sm font-bold text-white bg-green-700 px-4 py-2 rounded-lg hover:bg-green-800 transition">Visit Marketplace →</a>
+    </div>
 </div>
 
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">

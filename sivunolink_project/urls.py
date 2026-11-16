@@ -33,7 +33,9 @@ urlpatterns = [
         # Dispute Management
     path('admin-dashboard/disputes/', views.admin_disputes, name='admin_disputes'),
     path('admin-dashboard/disputes/resolve/<int:escrow_id>/', views.resolve_dispute, name='resolve_dispute'),
-    
+        # Buyer History
+    path('history/', views.buyer_history, name='buyer_history'),
+    path('order/delete/<int:order_id>/', views.delete_order, name='delete_order'),
     # Custom Admin Hub
     path('admin-dashboard/settings/', views.custom_admin_settings, name='custom_admin_settings'),
     path('admin-dashboard/users/', views.admin_users, name='admin_users'),

@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
-{% block content %}
 {% load static %}
+
+{% block content %}
 <div class="mb-8">
     <h1 class="text-3xl font-bold text-slate-900">{{ t.marketplace }}</h1>
     <p class="text-slate-500">{{ t.welcome }}</p>
@@ -10,11 +11,7 @@
     {% for product in products %}
     <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
        
-        <!-- In marketplace.html, replace the image block with this: -->
-      
-                <!-- Bulletproof Image Wrapper -->
-        
-                <!-- Static Real Images -->
+        <!-- Bulletproof Image Wrapper -->
         <div class="w-full h-40 bg-slate-100 relative overflow-hidden">
             {% if "cabbage" in product.product_name|lower %}
                 <img src="{% static 'images/products/cabbage.jpg' %}" alt="Cabbage" class="w-full h-full object-cover">
@@ -25,14 +22,14 @@
             {% elif "potato" in product.product_name|lower %}
                 <img src="{% static 'images/products/potato.jpg' %}" alt="Potatoes" class="w-full h-full object-cover">
             {% elif "orange" in product.product_name|lower %}
-                 <img src="{% static 'images/products/oranges_fresh.jpg' %}" alt="Oranges" class="w-full h-full object-cover">
+                <img src="{% static 'images/products/oranges_fresh.jpg' %}" alt="Oranges" class="w-full h-full object-cover">
             {% elif "bean" in product.product_name|lower %}
                 <img src="{% static 'images/products/beans.jpg' %}" alt="Beans" class="w-full h-full object-cover">
             {% elif "tomato" in product.product_name|lower %}
                 <img src="{% static 'images/products/tomato.jpg' %}" alt="Tomatoes" class="w-full h-full object-cover">
             {% elif "apple" in product.product_name|lower %}
-
-                        {% elif "peppercorn" in product.product_name|lower %}
+                <img src="{% static 'images/products/apple.jpg' %}" alt="Apple" class="w-full h-full object-cover">
+            {% elif "peppercorn" in product.product_name|lower %}
                 <img src="{% static 'images/products/peppercorns.jpg' %}" alt="Peppercorns" class="w-full h-full object-cover">
             {% elif "pepper" in product.product_name|lower %}
                 <img src="{% static 'images/products/green_pepper.jpg' %}" alt="Green Pepper" class="w-full h-full object-cover">
@@ -40,11 +37,8 @@
                 <img src="{% static 'images/products/watermelon.jpg' %}" alt="Watermelon" class="w-full h-full object-cover">
             {% elif "butternut" in product.product_name|lower %}
                 <img src="{% static 'images/products/butternut.jpg' %}" alt="Butternut" class="w-full h-full object-cover">
-            {% elif "chilli" in product.product_name|lower or "chili" in product.product_name|lower %}
+            {% elif "chill" in product.product_name|lower %}
                 <img src="{% static 'images/products/chillies.jpg' %}" alt="Chillies" class="w-full h-full object-cover">
-            {% else %}
-
-                <img src="{% static 'images/products/apple.jpg' %}" alt="Apple" class="w-full h-full object-cover">
             {% else %}
                 <!-- A nice fallback if a new product is added without an image -->
                 <div class="w-full h-full flex items-center justify-center bg-slate-200 text-slate-400 font-bold">

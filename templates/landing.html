@@ -2,6 +2,14 @@
 {% load static %}
 
 {% block content %}
+
+<!-- Add this to your landing.html or a dedicated "Scan Me" page -->
+<div class="flex flex-col items-center justify-center p-6 bg-white rounded-xl shadow-md border border-slate-200 mt-10">
+    <h3 class="font-bold text-lg text-slate-800 mb-2">Scan to open on your phone</h3>
+    <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://sivunolink-app.onrender.com" alt="QR Code" class="rounded-lg shadow-sm">
+    <p class="text-xs text-slate-500 mt-2">Experience SivunoLink on mobile</p>
+</div>
+
 <!-- Full width hero image container -->
 <div class="-mt-8 relative w-full min-h-[70vh] flex items-center justify-center bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');">
     
